@@ -112,6 +112,7 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 		return 0, msg.err
 	}
 	bytesCopied := 0
+	frame := msg.frame
 	for _, packet := range(frame.packets){
 		copy(p[bytesCopied:], []byte(packet))
 		bytesCopied += len(packet)
