@@ -10,4 +10,5 @@ Usage
         reader := New(connection)
         buf := make([]byte, 1024)
         count, err := reader.Read(buf)
+        // .....
     }
