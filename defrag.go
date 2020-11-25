@@ -157,7 +157,7 @@ func (d *Defrag) flashFullFrames() {
 
 
 // Fetch the packet header
-// If cache miss add add a new frame the cache
+// If cache miss add add a new frame to the cache
 // If cache hit update the frame in the cache
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(data)
