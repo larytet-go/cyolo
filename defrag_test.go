@@ -47,6 +47,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 
 	p[packetHeaderSize] = uint8(c.packet)
 	c.packet += 1
+	t.Logf("p=%v\n", p)
 	return (packetHeaderSize+1), nil, nil
 
 }
