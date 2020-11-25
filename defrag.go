@@ -52,6 +52,7 @@ const (
 	maxFrameSize = packetHeaderSize + maxPayloadSize
 )
 
+// Create a new Defragmentation API
 func New(connection net.PacketConn) io.Reader {
 	return new(connection)
 }
