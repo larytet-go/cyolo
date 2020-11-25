@@ -48,8 +48,7 @@ const (
 	// Unfortunately PacketHeader is padded
 	// packetHeaderSize = int(unsafe.Sizeof(ph)) is 12
 	// ph := PacketHeader{}
-
-	packetHeaderSize = 10 //
+	packetHeaderSize = 10
 	maxFrameSize     = packetHeaderSize + maxPayloadSize
 )
 
