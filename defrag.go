@@ -171,7 +171,8 @@ func (d *Defrag) storeInCache(data []byte) {
 			size:            0,		
 		}
 	}
-	frameNew.packets[packetHeader.Number] = data
+	_, packetHeaderSize, _ := getLimits()
+	frameNew.packets[packetHeader.Number] = data[packetHeaderSize:]
 	frameNew.packetsReceived += 1
 	frameNew.size += uint16(len(data))
 	frames[packetHeader.FrameID] = frameNew
