@@ -74,7 +74,10 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 func getPacketHeader(data []byte) PacketHeader {
     var packetHeader PacketHeader
     buf := bytes.NewReader(data)
-    binary.Read(buf, binary.LittleEndian, &packetHeader)
+	err := binary.Read(buf, binary.LittleEndian, &packetHeader)
+	if err != nil {
+		fmt.Printf("err = %v\n", err)
+	}
 	return packetHeader
 }
 
@@ -110,10 +113,6 @@ func new(connection PacketConn) io.Reader {
 			_, _, maxFrameSize := getLimits()
 			buf := make([]byte, maxFrameSize)
 			packetSize, _, err := d.connection.ReadFrom(buf)
-			if err != nil {
-				fmt.Printf("err=%v\n", err)
-				break
-			}
 			if packetSize > 0 {
 				buf = buf[:packetSize]
 				d.storeInCache(buf)
