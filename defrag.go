@@ -34,10 +34,6 @@ type Defrag struct {
 	frames map[uint32](*frame)
 	connection  PacketConn
 	ch chan chanMessage
-
-	maxPayloadSize int
-	packetHeaderSize int
-	maxFrameSize int
 }
 
 type PacketHeader struct {
@@ -63,6 +59,14 @@ func New(connection net.PacketConn) io.Reader {
 	return new(connection)
 }
 
+func getLimits() (maxPayloadSize int, packetHeaderSize int, maxFrameSize int) {
+	maxPayloadSize = math.MaxUint16
+	ph := PacketHeader{}
+	packetHeaderSize = int(unsafe.Sizeof(ph))
+	maxFrameSize = d.packetHeaderSize + d.maxPayloadSize
+	return 
+}
+
 // Defrag reads fragments of the packets from the connection 
 // collects packets in a cache. When all packets of a frame are collected writes
 // the whole frame to the output channel
@@ -79,15 +83,12 @@ func new(connection PacketConn) io.Reader {
 		connection: connection,
 		ch: make(chan chanMessage),
 	}
-	d.maxPayloadSize = math.MaxUint16
-	ph := PacketHeader{}
-	d.packetHeaderSize = int(unsafe.Sizeof(ph))
-	d.maxFrameSize = d.packetHeaderSize + d.maxPayloadSize
 
 	// Read packets from the connection until an error
 	go func(d *Defrag) {
 		for {
-			buf := make([]byte, d.maxFrameSize)
+			_, _, maxFrameSize := getLimits()
+			buf := make([]byte, maxFrameSize)
 			packetSize, _, err := d.connection.ReadFrom(buf)
 			if packetSize > 0 {
 				buf = buf[:packetSize]
