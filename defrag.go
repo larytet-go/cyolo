@@ -55,7 +55,7 @@ type PacketHeader struct {
 func getPacketHeader(data []byte) PacketHeader {
     var packetHeader PacketHeader
     buf := bytes.NewReader(data)
-    _ = binary.Read(buf, binary.LittleEndian, &packetHeader)
+    binary.Read(buf, binary.LittleEndian, &packetHeader)
 	return packetHeader
 }
 
