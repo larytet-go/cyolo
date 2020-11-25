@@ -82,7 +82,7 @@ func new(connection PacketConn) io.Reader {
 	d.maxPayloadSize = math.MaxUint16
 	ph := PacketHeader{}
 	d.packetHeaderSize = int(unsafe.Sizeof(ph))
-	d.maxFrameSize = d.PacketHeaderSize + d.PayloadSize
+	d.maxFrameSize = d.packetHeaderSize + d.maxPayloadSize
 
 	// Read packets from the connection until an error
 	go func(d *Defrag) {
