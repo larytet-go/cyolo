@@ -44,7 +44,7 @@ type PacketHeader struct {
 }
 
 type PacketConn interface {
-    ReadFrom(p []byte) (n int, addr Addr, err error)
+    ReadFrom(p []byte) (n int, addr net.Addr, err error)
 }
 
 // Fetch the packet header from a raw packet, return a Go struct
