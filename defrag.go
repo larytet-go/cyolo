@@ -120,6 +120,7 @@ func new(connection PacketConn) io.Reader {
 			buf := make([]byte, maxFrameSize)
 			packetSize, _, err := d.connection.ReadFrom(buf)
 			if packetSize > 0 {
+				// Assume that ReadFrom returns the whole packet
 				buf = buf[:packetSize]
 				d.storeInCache(buf)
 			}
