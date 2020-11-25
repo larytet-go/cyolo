@@ -42,6 +42,10 @@ const(
 	MaxFrameSize = unsafe.Sizeof(PacketHeader) + PayloadSize
 ) 
 
+type PacketConn interface {
+    ReadFrom(p []byte) (n int, addr Addr, err error)
+}
+
 // Fetch the packet header from a raw packet, return a Go struct
 // Cutting corners:
 //   * Assume network order
@@ -54,6 +58,10 @@ func getPacketHeader(data []byte) packetHeader {
 	return packetHeader
 }
 
+func New(func(connection net.PacketConn) io.Reader {
+	return new(connection)
+}
+
 // Defrag reads fragments of the packets from the connection 
 // collects packets in a cache. When all packets of a frame are collected writes
 // the whole frame to the output channel
@@ -64,7 +72,7 @@ func getPacketHeader(data []byte) packetHeader {
 //  * Assume wrap around of the the 32 bits unsigned frame ID
 //  * No initial synchronization: first frame has ID 0 
 //  * I read a whole packet every time
-func New(func(connection net.PacketConn) io.Reader {
+func New(func(connection PacketConn) io.Reader {
 	d := &Defrag {
 		frames: make(map[uint32](*frame)),
 		connection: connection,
