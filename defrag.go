@@ -32,7 +32,7 @@ type Defrag struct {
 	ch chan chanMessage
 }
 
-type PacketHeader {
+type PacketHeader struct {
 	frameID uint32
 	count   uint16
 	number  uint16

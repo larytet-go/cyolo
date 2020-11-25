@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net"
 	"testing"
+	"unsafe"
 )
 
 type PacketConnMock struct {
@@ -31,4 +32,13 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 }
 
 func Test_Read(t *testing.T) {
+}
+
+
+// Check padding of the PacketHeader
+func Test_PacketHeader(t *testing.T) {
+	size := unsafe.Sizeof(PacketHeader)
+	if size != 10 {
+		t.Fatalf("Unexpected packet size %d", size)
+	}
 }
