@@ -108,8 +108,8 @@ func new(connection PacketConn) io.Reader {
 //    * User provided buf has enough space for the whole frame?
 func (d *Defrag) Read(p []byte) (n int, err error) {
 	msg := <- d.ch
-	if msg.eof {
-		return 0, fmt.Errorf("EOF")
+	if msg.err != nil {
+		return 0, msg.err
 	}
 	bytesCopied := 0
 	for _, packet := range(frame.packets){
