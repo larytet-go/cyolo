@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net"
 	"testing"
-
-	"encoding/binary"
 )
 
 // Check padding of the PacketHeader
