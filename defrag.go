@@ -1,6 +1,10 @@
 package defrag
 
 import (
+	"io"
+	"math"
+	"net"
+
 	gocache "github.com/patrickmn/go-cache"
 )
 
@@ -12,6 +16,14 @@ type frame struct {
 	payloadLen uint16
 
 }
+const(
+	FrameIDSize = 4 
+	TotalPacketsSize = 2
+	PacketNumberSize = 2
+	PayloadLengthSize = 2
+	PayloadSize = math.MaxUint16
+	MaxFrameSize = FrameIDSize + TotalPacketsSize + PacketNumberSize + PayloadLengthSize + PayloadSize
+) 
 
 type Defrag struct {
 	lastFrameID uint32
@@ -36,7 +48,8 @@ func New(func(connection net.PacketConn) io.Reader {
 		c: make(chan frame)
 	}
 	go func(d *Defrag) {
-
+		buf := make([]byte, 
+		n int, addr Addr, err error := d.connection.ReadFrom()
 	}
 
 	return d
