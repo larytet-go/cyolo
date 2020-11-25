@@ -16,6 +16,7 @@ type frame struct {
 	payloadLen uint16
 
 }
+
 const(
 	FrameIDSize = 4 
 	TotalPacketsSize = 2
@@ -30,6 +31,20 @@ type Defrag struct {
 	frames   gocache.Cache
 	connection  net.PacketConn
 	c chan frame
+}
+
+type packetHeader {
+	frameID int
+	packets int
+	number  int
+	length  int
+}
+
+// Fetch the packet header from a raw packet, return a Go struct
+// Cutting corners:
+//   * Assume network order
+func getPacketHeader(data []byte) packetHeader {
+
 }
 
 // Defrag reads fragments of the packets from the connection 
@@ -48,8 +63,11 @@ func New(func(connection net.PacketConn) io.Reader {
 		c: make(chan frame)
 	}
 	go func(d *Defrag) {
-		buf := make([]byte, 
-		n int, addr Addr, err error := d.connection.ReadFrom()
+		buf := make([]byte, MaxFrameSize)
+		n , _, err := d.connection.ReadFrom()
+		if n > 0 {
+
+		}
 	}
 
 	return d
