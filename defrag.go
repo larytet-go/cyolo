@@ -47,7 +47,7 @@ func New(connection net.PacketConn) io.Reader {
 
 // Read reads frames from the channel into the provided buffer
 // Cutting corners:
-//    * User provided buf has enough space for the whole frame?
+//    * Provided by the user 'buf' has enough space for the whole frame
 func (d *Defrag) Read(p []byte) (n int, err error) {
 	msg := <- d.ch
 	if msg.err != nil {
