@@ -56,7 +56,7 @@ func New(connection net.PacketConn) io.Reader {
 	return new(connection)
 }
 
-// Blocking Read from the Defragmentation API
+// Blocking Read 
 // Read reads frames from the channel into the provided by the user buffer
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
