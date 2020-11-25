@@ -22,7 +22,7 @@ type frame struct {
 }
 
 type Defrag struct {
-	lastFrameID uint32
+	currentFrameID uint32
 	frames   gocache.Cache
 	connection  net.PacketConn
 	c chan frame
@@ -61,6 +61,7 @@ func getPacketHeader(data []byte) packetHeader {
 //  * The RAM is unlimited 
 //  * Assume wrap around of the the 32 bits unsigned frame ID
 //  * No initial synchronization: first frame has ID 0 
+//  * I read a whole packet every time
 func New(func(connection net.PacketConn) io.Reader {
 	d := &Defrag {
 		frames:  gocache.New(gocache.NoExpiration, gocache.NoExpiration),
@@ -69,9 +70,12 @@ func New(func(connection net.PacketConn) io.Reader {
 	}
 	go func(d *Defrag) {
 		buf := make([]byte, MaxFrameSize)
-		n , _, err := d.connection.ReadFrom()
+		packetSize , _, err := d.connection.ReadFrom()
 		if n > 0 {
-
+			buf = buf[:packetSize]
+			packetHeader := getPacketHeader(buf)
+			d.storeInCache(packetHeader, buf)
+			d.flashFullFrames()
 		}
 	}
 
