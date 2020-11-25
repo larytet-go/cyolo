@@ -9,36 +9,37 @@ import (
 	"encoding/binary"
 )
 
-type payload []byte
-type frame struct {
-	packets         []payload
-	id              uint32
-	missing         uint16
-	size            uint16
-}
+type (
+	payload []byte
+	frame   struct {
+		packets []payload
+		id      uint32
+		missing uint16
+		size    uint16
+	}
+	chanMessage struct {
+		frame *frame
+		err   error
+	}
 
-type chanMessage struct {
-	frame *frame
-	err   error
-}
+	PacketHeader struct {
+		FrameID uint32
+		Count   uint16
+		Number  uint16
+		Length  uint16
+	}
 
-type PacketConn interface {
-	ReadFrom(p []byte) (n int, addr net.Addr, err error)
-}
+	PacketConn interface {
+		ReadFrom(p []byte) (n int, addr net.Addr, err error)
+	}
 
-type Defrag struct {
-	currentFrameID uint32
-	frames         map[uint32](*frame)
-	connection     PacketConn
-	ch             chan chanMessage
-}
-
-type PacketHeader struct {
-	FrameID uint32
-	Count   uint16
-	Number  uint16
-	Length  uint16
-}
+	Defrag struct {
+		currentFrameID uint32
+		frames         map[uint32](*frame)
+		connection     PacketConn
+		ch             chan chanMessage
+	}
+)
 
 const (
 	maxPayloadSize = math.MaxUint16
@@ -167,7 +168,7 @@ func (d *Defrag) storeInCache(data []byte) {
 			id:      packetHeader.FrameID,
 
 			missing: packetHeader.Count,
-			size:            0,
+			size:    0,
 		}
 	}
 	payload := data[packetHeaderSize:]
