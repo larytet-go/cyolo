@@ -114,6 +114,7 @@ func new(connection PacketConn) io.Reader {
 	}
 
 	// Read packets from the connection until an error
+	// One thread does it all, no need for synchronization
 	go func(d *Defrag) {
 		for {
 			buf := make([]byte, maxFrameSize)
