@@ -156,6 +156,11 @@ func (d *Defrag) flashFullFrames() {
 // Fetch the packet header
 // If cache miss add add a new frame to the cache
 // If cache hit update the frame in the cache
+// Cutting corners:
+//  * I do expect duplicate packets
+//  * RAM is unlimited
+//  * 'map' never overflows
+//  * I do not check packetHeader.Length (payload length)
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := &PacketHeader{}
 	packetHeader.read(data)
