@@ -144,7 +144,7 @@ func (d *Defrag) storeInCache(data []byte) {
 	frameNew, found := frames[packetHeader.frameID]
 	if !found {
 		frameNew = &frame{
-			packets: make([]payload, packetHeader.packets),
+			packets: make([]payload, packetHeader.count),
 			id:      packetHeader.frameID,
 
 			packetsExpected: packetHeader.count,
