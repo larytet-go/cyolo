@@ -17,6 +17,7 @@ type (
 		missing uint16
 		size    uint16
 	}
+
 	chanMessage struct {
 		frame *frame
 		err   error
