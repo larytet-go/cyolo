@@ -88,7 +88,7 @@ func new(connection PacketConn) io.Reader {
 	go func(d *Defrag) {
 		for {
 			buf := make([]byte, d.maxFrameSize)
-			packetSize , _, err := d.connection.ReadFrom()
+			packetSize , _, err := d.connection.ReadFrom(buf)
 			if n > 0 {
 				buf = buf[:packetSize]
 				d.storeInCache(buf)
