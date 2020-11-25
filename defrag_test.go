@@ -8,8 +8,8 @@ import (
 )
 
 type PacketConnMock struct {
-	frame  int
-	packet int
+	frame  uint32
+	packet uint16
 	packets int
 }
 
@@ -32,6 +32,10 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 }
 
 func Test_Read(t *testing.T) {
+	packetConnMock := &PacketConnMock {
+		packets: 3,
+	}
+	reader := new(packetConnMock)
 }
 
 
