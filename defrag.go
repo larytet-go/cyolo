@@ -41,6 +41,17 @@ type PacketHeader struct {
 	Length  uint16
 }
 
+const (
+	maxPayloadSize = math.MaxUint16
+
+	// Unfortunately PacketHeader is padded
+	// packetHeaderSize = int(unsafe.Sizeof(ph)) is 12
+	// ph := PacketHeader{}
+	
+	packetHeaderSize = 10 // 
+	maxFrameSize = packetHeaderSize + maxPayloadSize
+)
+
 func New(connection net.PacketConn) io.Reader {
 	return new(connection)
 }
@@ -86,20 +97,6 @@ func setPacketHeader(data []byte, packetHeader PacketHeader) {
     binary.BigEndian.PutUint16(data[8:], packetHeader.Length)
 }
 
-
-// getLimits() returns a few convenient constants
-func getLimits() (maxPayloadSize int, packetHeaderSize int, maxFrameSize int) {
-	maxPayloadSize = math.MaxUint16
-
-	// Unfortunately PacketHeader is padded
-	// packetHeaderSize = int(unsafe.Sizeof(ph)) is 12
-	// ph := PacketHeader{}
-	
-	packetHeaderSize = 10 // 
-	maxFrameSize = packetHeaderSize + maxPayloadSize
-	return 
-}
-
 // Defrag reads fragments of the packets from the connection 
 // collects packets in a cache. When all packets of a frame are collected writes
 // the whole frame to the output channel
@@ -120,7 +117,6 @@ func new(connection PacketConn) io.Reader {
 	// Read packets from the connection until an error
 	go func(d *Defrag) {
 		for {
-			_, _, maxFrameSize := getLimits()
 			buf := make([]byte, maxFrameSize)
 			packetSize, _, err := d.connection.ReadFrom(buf)
 			if packetSize > 0 {
@@ -177,7 +173,6 @@ func (d *Defrag) storeInCache(data []byte) {
 			size:            0,		
 		}
 	}
-	_, packetHeaderSize, _ := getLimits()
 	payload := data[packetHeaderSize:]
 	cachedFrame.packets[packetHeader.Number] = payload
 	cachedFrame.packetsReceived += 1
