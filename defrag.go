@@ -39,7 +39,7 @@ type PacketHeader struct {
 	length  uint16
 }
 
-const(
+var (
 	PayloadSize = math.MaxUint16
 	PacketHeaderSize = unsafe.Sizeof(PacketHeader)
 	MaxFrameSize = PacketHeaderSize + PayloadSize
