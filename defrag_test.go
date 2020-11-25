@@ -31,7 +31,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	binary.Write(buf, binary.LittleEndian, packetHeader)
 	_, packetHeaderSize, _ := getLimits()
 
-	p[packetHeaderSize:] = c.packet
+	p[packetHeaderSize] = uint8(c.packet)
 	c.packet += 1
 	return (PacketHeaderSize+1), net.Addr{}, nil
 
