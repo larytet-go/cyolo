@@ -36,6 +36,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	}
 	fmt.Printf("test packetHeader=%v\n", packetHeader)
 	setPacketHeader(p, packetHeader)
+	_, packetHeaderSize, _ := getLimits()
 	p[packetHeaderSize] = uint8(c.packet)
 	c.packet += 1
 	fmt.Printf("p=%v\n", p[:packetHeaderSize+1])
