@@ -27,7 +27,7 @@ type Defrag struct {
 	currentFrameID uint32
 	frames map[uint32])(*frame)
 	connection  net.PacketConn
-	c chan frame
+	ch chan chanMessage
 }
 
 type PacketHeader {
@@ -79,15 +79,20 @@ func New(func(connection PacketConn) io.Reader {
 		c: make(chan frame)
 	}
 	go func(d *Defrag) {
-		buf := make([]byte, MaxFrameSize)
-		packetSize , _, err := d.connection.ReadFrom()
-		if n > 0 {
-			buf = buf[:packetSize]
-			d.storeInCache(buf)
+		for {
+			buf := make([]byte, MaxFrameSize)
+			packetSize , _, err := d.connection.ReadFrom()
+			if n > 0 {
+				buf = buf[:packetSize]
+				d.storeInCache(buf)
+			}
+			d.flashFullFrames()
+			if err != nil {
+				d.ch <- chanMessage{eof: true}
+				break
+			}	
 		}
-		d.flashFullFrames()
 	}
-
 	return d
 }
 
@@ -95,7 +100,10 @@ func New(func(connection PacketConn) io.Reader {
 // Cutting corners:
 //    * User provided buf has enough space for the whole frame?
 func (d *Defrag) Read(p []byte) (n int, err error) {
-	frame <- d.c
+	msg <- d.ch
+	if msg.eof {
+		return 0, fmt.Errorf("EOF")
+	}
 	bytesCopied := 0
 	for _, packet in range(frame.packets){
 		copy(p[bytesCopied:], ([]byte)packet)
@@ -114,7 +122,7 @@ func (d *Defrag) flashFullFrames(data []byte) {
 		if found {
 			delete(frames, currentFrameID)
 			currentFrameID += 1
-			d.c <- frameNew
+			d.ch <- chanMessage{frame:frameNew}
 		}
 	}
 
