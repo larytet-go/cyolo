@@ -41,10 +41,10 @@ type Defrag struct {
 }
 
 type PacketHeader struct {
-	frameID uint32
-	count   uint16
-	number  uint16
-	length  uint16
+	FrameID uint32
+	Count   uint16
+	Number  uint16
+	Length  uint16
 }
 
 // Fetch the packet header from a raw packet, return a Go struct
