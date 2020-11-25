@@ -15,7 +15,7 @@ type (
 		packets []payload
 		id      uint32
 		missing uint16
-		size    uint16
+		size    uint32
 	}
 
 	chanMessage struct {
@@ -167,7 +167,6 @@ func (d *Defrag) storeInCache(data []byte) {
 		cachedFrame = &frame{
 			packets: make([]payload, packetHeader.Count),
 			id:      packetHeader.FrameID,
-
 			missing: packetHeader.Count,
 			size:    0,
 		}
@@ -175,6 +174,6 @@ func (d *Defrag) storeInCache(data []byte) {
 	payload := data[packetHeaderSize:]
 	cachedFrame.packets[packetHeader.Number] = payload
 	cachedFrame.missing -= 1
-	cachedFrame.size += uint16(len(data))
+	cachedFrame.size += uint32(len(payload))
 	frames[packetHeader.FrameID] = cachedFrame
 }
