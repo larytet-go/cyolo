@@ -13,7 +13,7 @@ type payload []byte
 type frame struct {
 	packets         []payload
 	id              uint32
-	packetsExpected uint16
+	missing         uint16
 	size            uint16
 }
 
@@ -142,7 +142,7 @@ func (d *Defrag) flashFullFrames() {
 	for found {
 		frame, found = d.frames[currentFrameID]
 		// I have a complete frame?
-		found = found && (frame.packetsExpected == 0)
+		found = found && (frame.missing == 0)
 		if found {
 			d.ch <- chanMessage{frame: frame}
 			delete(d.frames, currentFrameID)
@@ -166,13 +166,13 @@ func (d *Defrag) storeInCache(data []byte) {
 			packets: make([]payload, packetHeader.Count),
 			id:      packetHeader.FrameID,
 
-			packetsExpected: packetHeader.Count,
+			missing: packetHeader.Count,
 			size:            0,
 		}
 	}
 	payload := data[packetHeaderSize:]
 	cachedFrame.packets[packetHeader.Number] = payload
-	cachedFrame.packetsExpected -= 1
+	cachedFrame.missing -= 1
 	cachedFrame.size += uint16(len(data))
 	frames[packetHeader.FrameID] = cachedFrame
 }
