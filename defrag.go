@@ -25,10 +25,14 @@ type chanMessage struct {
 	err   error
 }
 
+type PacketConn interface {
+    ReadFrom(p []byte) (n int, addr net.Addr, err error)
+}
+
 type Defrag struct {
 	currentFrameID uint32
 	frames map[uint32](*frame)
-	connection  net.PacketConn
+	connection  PacketConn
 	ch chan chanMessage
 
 	maxPayloadSize int
@@ -41,10 +45,6 @@ type PacketHeader struct {
 	count   uint16
 	number  uint16
 	length  uint16
-}
-
-type PacketConn interface {
-    ReadFrom(p []byte) (n int, addr net.Addr, err error)
 }
 
 // Fetch the packet header from a raw packet, return a Go struct
