@@ -13,11 +13,11 @@ import (
 )
 
 type frame struct {
-	packets []([]byte)
-	id   uint32
+	packets         []([]byte)
+	id              uint32
 	packetsExpected uint16
 	packetsReceived uint16
-	payloadLen uint16
+	payloadLen      uint16
 
 }
 
@@ -73,8 +73,7 @@ func New(func(connection net.PacketConn) io.Reader {
 		packetSize , _, err := d.connection.ReadFrom()
 		if n > 0 {
 			buf = buf[:packetSize]
-			packetHeader := getPacketHeader(buf)
-			d.storeInCache(packetHeader, buf)
+			d.storeInCache(buf)
 		}
 		d.flashFullFrames()
 	}
@@ -84,7 +83,12 @@ func New(func(connection net.PacketConn) io.Reader {
 
 // Read reads frames from the channel into the provided buffer
 // Cutting corners:
-//    * ??
+//    * User provided buf has enough space for the whole frame
 func (d *Defrag) Read(p []byte) (n int, err error) {
+	frame <- d.c
 
+}
+
+func (d *Defrag) storeInCache(data []byte) {
+	packetHeader := getPacketHeader(buf)
 }
