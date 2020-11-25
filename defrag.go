@@ -24,9 +24,10 @@ type chanMessage struct {
 	frame frame
 	err   errors.Error
 }
+
 type Defrag struct {
 	currentFrameID uint32
-	frames map[uint32])(*frame)
+	frames map[uint32](*frame)
 	connection  net.PacketConn
 	ch chan chanMessage
 }
