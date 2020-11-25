@@ -66,6 +66,7 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 
 // Fetch the packet header from a raw packet, return a Go struct
 // Cutting corners:
+//   * Ignore golang padding
 //   * Assume network order
 //   * Ignore errors
 // Based on https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
