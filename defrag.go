@@ -73,7 +73,7 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 func getPacketHeader(data []byte) PacketHeader {
     var packetHeader PacketHeader
     buf := bytes.NewReader(data)
-	err := binary.Read(buf, binary.LittleEndian, &packetHeader)
+	binary.Read(buf, binary.LittleEndian, &packetHeader)
 	return packetHeader
 }
 
