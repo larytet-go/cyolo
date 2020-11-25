@@ -7,7 +7,6 @@ import (
 	"io"
 	"math"
 	"net"
-	"unsafe"
 
 	"encoding/binary"
 )
