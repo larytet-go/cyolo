@@ -74,19 +74,17 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 func getPacketHeader(data []byte) PacketHeader {
     var packetHeader PacketHeader
     buf := bytes.NewReader(data)
-	fmt.Printf("buf = %v\n", buf)
 	err := binary.Read(buf, binary.LittleEndian, &packetHeader)
-	if err != nil {
-		fmt.Printf("err = %v\n", err)
-	}
 	return packetHeader
 }
 
 
+// Cutting corners:
+// 	* Ignore PacketHeader padding
 func getLimits() (maxPayloadSize int, packetHeaderSize int, maxFrameSize int) {
 	maxPayloadSize = math.MaxUint16
-	ph := PacketHeader{}
-	packetHeaderSize = int(unsafe.Sizeof(ph))
+	// ph := PacketHeader{}
+	packetHeaderSize = 10 // int(unsafe.Sizeof(ph)) is 12
 	maxFrameSize = packetHeaderSize + maxPayloadSize
 	return 
 }
