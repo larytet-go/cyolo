@@ -1,9 +1,13 @@
 package defrag
 
 import (
+	"bytes"
 	"io"
 	"math"
 	"net"
+	"unsafe"
+
+	"encoding/binary"
 
 	gocache "github.com/patrickmn/go-cache"
 )
@@ -17,15 +21,6 @@ type frame struct {
 
 }
 
-const(
-	FrameIDSize = 4 
-	TotalPacketsSize = 2
-	PacketNumberSize = 2
-	PayloadLengthSize = 2
-	PayloadSize = math.MaxUint16
-	MaxFrameSize = FrameIDSize + TotalPacketsSize + PacketNumberSize + PayloadLengthSize + PayloadSize
-) 
-
 type Defrag struct {
 	lastFrameID uint32
 	frames   gocache.Cache
@@ -33,18 +28,28 @@ type Defrag struct {
 	c chan frame
 }
 
-type packetHeader {
-	frameID int
-	packets int
-	number  int
-	length  int
+type PacketHeader {
+	frameID uint32
+	packets uint16
+	number  uint16
+	length  uint16
 }
+
+const(
+	PayloadSize = math.MaxUint16
+	MaxFrameSize = unsafe.Sizeof(PacketHeader) + PayloadSize
+) 
 
 // Fetch the packet header from a raw packet, return a Go struct
 // Cutting corners:
 //   * Assume network order
+//   * Ignore errors
+// Based on https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
 func getPacketHeader(data []byte) packetHeader {
-
+    var packetHeader PacketHeader
+    buf := bytes.NewReader(data)
+    _ = binary.Read(buf, binary.LittleEndian, &packetHeader)
+	return packetHeader
 }
 
 // Defrag reads fragments of the packets from the connection 
