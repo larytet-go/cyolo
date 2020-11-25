@@ -139,7 +139,7 @@ func (d *Defrag) flashFullFrames() {
 }
 
 func (d *Defrag) storeInCache(data []byte) {
-	packetHeader := getPacketHeader(buf)
+	packetHeader := getPacketHeader(data)
 	frames := d.frames
 	frameNew, found := frames[packetHeader.frameID]
 	if !found {
