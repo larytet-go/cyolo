@@ -23,6 +23,7 @@ type PacketConnMock struct {
 	frame   uint32
 	packet  uint16
 	packets uint16
+	t       *testing.T
 }
 
 func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
@@ -38,7 +39,10 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	}
 	// https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
 	buf := bytes.NewBuffer(p)
-	binary.Write(buf, binary.LittleEndian, packetHeader)
+	err := binary.Write(buf, binary.LittleEndian, packetHeader)
+	if err != nil {
+		c.t.Fatalf("Unexpected error %v", err)
+	}
 	_, packetHeaderSize, _ := getLimits()
 
 	p[packetHeaderSize] = uint8(c.packet)
@@ -50,6 +54,8 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 func Test_Read(t *testing.T) {
 	packetConnMock := &PacketConnMock {
 		packets: 3,
+
+		t: t,
 	}
 	reader := new(packetConnMock)
 	buf := make([]byte, 1024)
