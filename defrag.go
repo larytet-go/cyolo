@@ -128,7 +128,7 @@ func (d *Defrag) flashFullFrames() {
 		// I have a complete frame?
 		found = found && frameNew.packetsExpected == frameNew.packetsReceived 
 		if found {
-			delete(frames, currentFrameID)
+			delete(d.frames, currentFrameID)
 			currentFrameID += 1
 			d.ch <- chanMessage{frame:frameNew}
 		}
