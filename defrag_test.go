@@ -3,6 +3,7 @@ package defrag
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"net"
 	"testing"
 
@@ -36,7 +37,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 		Number:  c.packet,
 		Length:  1,
 	}
-	t.Logf("test packetHeader=%v\n", *packetHeader)
+	fmt.Printf("test packetHeader=%v\n", *packetHeader)
 	// https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
 	buf := bytes.NewBuffer(p)
 	err = binary.Write(buf, binary.LittleEndian, packetHeader)
