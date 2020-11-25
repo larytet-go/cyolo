@@ -8,9 +8,9 @@ import (
 )
 
 type PacketConnMock struct {
-	frame  uint32
-	packet uint16
-	packets int
+	frame   uint32
+	packet  uint16
+	packets uint16
 }
 
 func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
