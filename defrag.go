@@ -75,8 +75,8 @@ func New(func(connection net.PacketConn) io.Reader {
 			buf = buf[:packetSize]
 			packetHeader := getPacketHeader(buf)
 			d.storeInCache(packetHeader, buf)
-			d.flashFullFrames()
 		}
+		d.flashFullFrames()
 	}
 
 	return d
