@@ -23,7 +23,7 @@ type PacketConnMock struct {
 }
 
 func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
-	if c.packet > c.packets {
+	if c.packet >= c.packets {
 		return 0, nil, errors.New("EOF")
 	}
 
