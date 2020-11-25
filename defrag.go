@@ -63,7 +63,7 @@ func getLimits() (maxPayloadSize int, packetHeaderSize int, maxFrameSize int) {
 	maxPayloadSize = math.MaxUint16
 	ph := PacketHeader{}
 	packetHeaderSize = int(unsafe.Sizeof(ph))
-	maxFrameSize = d.packetHeaderSize + d.maxPayloadSize
+	maxFrameSize = packetHeaderSize + maxPayloadSize
 	return 
 }
 
