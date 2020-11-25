@@ -133,7 +133,7 @@ func new(connection PacketConn) io.Reader {
 }
 
 // Check if currentFrameID is in the cache and completed
-// If I have the whole frame send the frame to the client
+// If I have a whole frame send the frame to the client
 // increment the currentFrameID
 func (d *Defrag) flashFullFrames() {
 	found := true
