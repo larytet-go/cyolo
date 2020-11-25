@@ -3,6 +3,7 @@ package defrag
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"net"
@@ -143,6 +144,7 @@ func (d *Defrag) flashFullFrames() {
 
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(data)
+	fmt.Printf("packetHeader %v\n", packetHeader)
 	frames := d.frames
 	frameNew, found := frames[packetHeader.FrameID]
 	if !found {
