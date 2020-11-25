@@ -46,7 +46,7 @@ const (
 	maxPayloadSize = math.MaxUint16
 
 	// Unfortunately PacketHeader is padded
-	// packetHeaderSize = int(unsafe.Sizeof(ph)) is 12
+	// packetHeaderSize = int(unsafe.Sizeof(ph)) gives 12
 	// ph := PacketHeader{}
 	packetHeaderSize = 10
 	maxFrameSize     = packetHeaderSize + maxPayloadSize
@@ -58,7 +58,8 @@ func New(connection net.PacketConn) io.Reader {
 }
 
 // Blocking Read
-// Read reads frames from the channel into the provided by the user buffer
+// Read reads frames from the channel a whole frame
+// Copies the data from the frame into the provided by the user buffer
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
 func (d *Defrag) Read(p []byte) (n int, err error) {
