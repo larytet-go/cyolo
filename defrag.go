@@ -87,12 +87,15 @@ func setPacketHeader(data []byte, packetHeader PacketHeader) {
 }
 
 
-// Cutting corners:
-// 	* Ignore PacketHeader padding
+// getLimits() returns a few convenient constants
 func getLimits() (maxPayloadSize int, packetHeaderSize int, maxFrameSize int) {
 	maxPayloadSize = math.MaxUint16
+
+	// Unfortunately PacketHeader is padded
+	// packetHeaderSize = int(unsafe.Sizeof(ph)) is 12
 	// ph := PacketHeader{}
-	packetHeaderSize = 10 // int(unsafe.Sizeof(ph)) is 12
+	
+	packetHeaderSize = 10 // 
 	maxFrameSize = packetHeaderSize + maxPayloadSize
 	return 
 }
