@@ -87,7 +87,7 @@ func new(connection PacketConn) io.Reader {
 	// Read packets from the connection until an error
 	go func(d *Defrag) {
 		for {
-			buf := make([]byte, MaxFrameSize)
+			buf := make([]byte, d.maxFrameSize)
 			packetSize , _, err := d.connection.ReadFrom()
 			if n > 0 {
 				buf = buf[:packetSize]
