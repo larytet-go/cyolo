@@ -86,7 +86,12 @@ func New(func(connection net.PacketConn) io.Reader {
 //    * User provided buf has enough space for the whole frame?
 func (d *Defrag) Read(p []byte) (n int, err error) {
 	frame <- d.c
-
+	bytesCopied := 0
+	for _, packet in range(frame.packets){
+		copy(p[bytesCopied:], ([]byte)packet)
+		bytesCopied += len(packet)
+	}
+	return bytesCopied, nil
 }
 
 func (d *Defrag) flashFullFrames(data []byte) {
