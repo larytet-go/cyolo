@@ -9,6 +9,14 @@ import (
 	"encoding/binary"
 )
 
+// Check padding of the PacketHeader
+func Test_PacketHeader(t *testing.T) {
+	_, packetHeaderSize, _ := getLimits()
+	if packetHeaderSize != 10 {
+		t.Fatalf("Unexpected packet size %d", packetHeaderSize)
+	}
+}
+
 type PacketConnMock struct {
 	frame   uint32
 	packet  uint16
@@ -53,14 +61,5 @@ func Test_Read(t *testing.T) {
 	_, err = reader.Read(buf)
 	if err == nil {
 		t.Fatalf("Expected error")
-	}
-}
-
-
-// Check padding of the PacketHeader
-func Test_PacketHeader(t *testing.T) {
-	_, packetHeaderSize, _ := getLimits()
-	if packetHeaderSize != 10 {
-		t.Fatalf("Unexpected packet size %d", packetHeaderSize)
 	}
 }
