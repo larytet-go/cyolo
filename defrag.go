@@ -89,6 +89,23 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 
 }
 
+func (d *Defrag) flashFullFrames(data []byte) {
+	found := true
+	currentFrameID := d.currentFrameID
+	for found {
+		frameNew, found := frames.Get(currentFrameID)
+		// I have a complete frame?
+		found = found && frameNew.packetsExpected == frameNew.packetsReceived 
+		if found {
+			currentFrameID += 1
+			d.c <- frameNew
+		}
+	}
+
+	// Probably a new currentFrameID 
+	d.currentFrameID = currentFrameID
+}
+
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(buf)
 	frames := d.frames
