@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net"
 	"testing"
-	"unsafe"
 
 	"encoding/binary"
 )
