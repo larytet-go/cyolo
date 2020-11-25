@@ -8,7 +8,6 @@ import (
 
 // Check padding of the PacketHeader
 func Test_PacketHeader(t *testing.T) {
-	_, packetHeaderSize, _ := getLimits()
 	if packetHeaderSize != 10 {
 		t.Fatalf("Unexpected packet size %d", packetHeaderSize)
 	}
