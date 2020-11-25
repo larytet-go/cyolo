@@ -2,6 +2,7 @@ package defrag
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"math"
 	"net"
@@ -19,9 +20,9 @@ type frame struct {
 	size            uint16
 }
 
-type chanMessage {
+type chanMessage struct {
 	frame frame
-	eof   bool
+	err   errors.Error
 }
 type Defrag struct {
 	currentFrameID uint32
@@ -89,7 +90,7 @@ func New(func(connection PacketConn) io.Reader {
 			}
 			d.flashFullFrames()
 			if err != nil {
-				d.ch <- chanMessage{eof: true}
+				d.ch <- chanMessage{err: errors.Error("EOF")}
 				break
 			}	
 		}
