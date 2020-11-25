@@ -2,6 +2,7 @@ package defrag
 
 import (
 	"errors"
+	"binary"
 	"net"
 	"testing"
 	"unsafe"
