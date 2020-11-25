@@ -133,6 +133,9 @@ func new(connection PacketConn) io.Reader {
 	return d
 }
 
+// Check if currentFrameID is in the cache and completed
+// If I have the whole frame send to the data to the client
+// increment the currentFrameID
 func (d *Defrag) flashFullFrames() {
 	found := true
 	currentFrameID := d.currentFrameID
@@ -152,12 +155,16 @@ func (d *Defrag) flashFullFrames() {
 	d.currentFrameID = currentFrameID
 }
 
+
+// Fetch the packet header
+// If cache miss add add a new frame the cache
+// If cache hit update the frame in the cache
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(data)
 	frames := d.frames
-	frameNew, found := frames[packetHeader.FrameID]
+	cachedFrame, found := frames[packetHeader.FrameID]
 	if !found {
-		frameNew = &frame{
+		cachedFrame = &frame{
 			packets: make([]payload, packetHeader.Count),
 			id:      packetHeader.FrameID,
 
@@ -171,5 +178,5 @@ func (d *Defrag) storeInCache(data []byte) {
 	frameNew.packets[packetHeader.Number] = payload
 	frameNew.packetsReceived += 1
 	frameNew.size += uint16(len(data))
-	frames[packetHeader.FrameID] = frameNew
+	frames[packetHeader.FrameID] = cachedFrame
 }
