@@ -12,13 +12,13 @@ import (
 	gocache "github.com/patrickmn/go-cache"
 )
 
+type payload []byte
 type frame struct {
-	packets         []([]byte)
+	packets         []payload
 	id              uint32
 	packetsExpected uint16
 	packetsReceived uint16
-	payloadLen      uint16
-
+	size            uint16
 }
 
 type Defrag struct {
@@ -30,7 +30,7 @@ type Defrag struct {
 
 type PacketHeader {
 	frameID uint32
-	packets uint16
+	count   uint16
 	number  uint16
 	length  uint16
 }
@@ -83,7 +83,7 @@ func New(func(connection net.PacketConn) io.Reader {
 
 // Read reads frames from the channel into the provided buffer
 // Cutting corners:
-//    * User provided buf has enough space for the whole frame
+//    * User provided buf has enough space for the whole frame?
 func (d *Defrag) Read(p []byte) (n int, err error) {
 	frame <- d.c
 
@@ -91,4 +91,20 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(buf)
+	frames := d.frames
+	frameNew, found := frames.Get(packetHeader.frameID)
+	if !found {
+		frameNew = &frame{
+			packets: make([]payload, packetHeader.packets),
+			id:      packetHeader.frameID,
+
+			packetsExpected: packetHeader.count,
+			packetsReceived: 0,
+			size:            0,		
+		}
+	}
+	frameNew.packets[packetHeader.number] = data
+	frameNew.packetsReceived += 1
+	frameNew.size += len(data)
+	frames.Set(packetHeader.frameID, frameNew)
 }
