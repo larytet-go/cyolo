@@ -72,10 +72,10 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 // Based on https://medium.com/learning-the-go-programming-language/encoding-data-with-the-go-binary-package-42c7c0eb3e73
 func getPacketHeader(data []byte) PacketHeader {
     packetHeader := PacketHeader{
-		FrameID := binary.BigEndian.Uint32(data[0:])
-		Count := binary.BigEndian.Uint16(data[4:])
-		Number := binary.BigEndian.Uint16(data[6:])
-		Length := binary.BigEndian.Uint16(data[8:])
+		FrameID: binary.BigEndian.Uint32(data[0:]),
+		Count: binary.BigEndian.Uint16(data[4:]),
+		Number: binary.BigEndian.Uint16(data[6:]),
+		Length: binary.BigEndian.Uint16(data[8:]),
 	}
 	return packetHeader
 }
