@@ -80,7 +80,7 @@ func new(connection PacketConn) io.Reader {
 		ch: make(chan chanMessage),
 	}
 	d.maxPayloadSize = math.MaxUint16
-	d.packetHeaderSize = unsafe.Sizeof(PacketHeader)
+	d.packetHeaderSize = int(unsafe.Sizeof(PacketHeader))
 	d.maxFrameSize = d.PacketHeaderSize + d.PayloadSize
 
 	// Read packets from the connection until an error
