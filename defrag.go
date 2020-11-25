@@ -103,7 +103,7 @@ func setPacketHeader(data []byte, packetHeader PacketHeader) {
 //  * Assume that all fragments arrive, no timeout 
 //  * No error checks 
 //  * The RAM is unlimited 
-//  * Assume wrap around of the the 32 bits unsigned frame ID
+//  * Assume wrap around of the 32 bits unsigned frame ID
 //  * No initial synchronization: first frame has ID 0 
 //  * I read a whole packet every time
 func new(connection PacketConn) io.Reader {
@@ -133,7 +133,7 @@ func new(connection PacketConn) io.Reader {
 }
 
 // Check if currentFrameID is in the cache and completed
-// If I have the whole frame send to the data to the client
+// If I have the whole frame send the frame to the client
 // increment the currentFrameID
 func (d *Defrag) flashFullFrames() {
 	found := true
