@@ -138,12 +138,14 @@ func new(connection PacketConn) io.Reader {
 }
 
 func (d *Defrag) flashFullFrames() {
+	fmt.Printf("flashFullFrames begin\n")
 	found := true
 	currentFrameID := d.currentFrameID
 	for found {
 		frameNew, found := d.frames[currentFrameID]
 		// I have a complete frame?
-		found = found && frameNew.packetsExpected == frameNew.packetsReceived 
+		found = found && (frameNew.packetsExpected == frameNew.packetsReceived)
+		fmt.Printf("flashFullFrames found=%v frame=%v\n", found, *frameNew)
 		if found {
 			delete(d.frames, currentFrameID)
 			currentFrameID += 1
@@ -153,6 +155,7 @@ func (d *Defrag) flashFullFrames() {
 
 	// Probably a new currentFrameID 
 	d.currentFrameID = currentFrameID
+	fmt.Printf("flashFullFrames end\n")
 }
 
 func (d *Defrag) storeInCache(data []byte) {
