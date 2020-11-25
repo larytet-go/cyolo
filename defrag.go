@@ -95,7 +95,7 @@ func new(connection PacketConn) io.Reader {
 			}
 			d.flashFullFrames()
 			if err != nil {
-				d.ch <- chanMessage{err: errors.Error("EOF")}
+				d.ch <- chanMessage{err: errors.New("EOF")}
 				break
 			}	
 		}
