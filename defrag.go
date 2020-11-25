@@ -75,7 +75,7 @@ func New(connection net.PacketConn) io.Reader {
 //  * Assume wrap around of the the 32 bits unsigned frame ID
 //  * No initial synchronization: first frame has ID 0 
 //  * I read a whole packet every time
-func new(func(connection PacketConn) io.Reader {
+func new(connection PacketConn) io.Reader {
 	d := &Defrag {
 		frames: make(map[uint32](*frame)),
 		connection: connection,
