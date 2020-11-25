@@ -52,7 +52,7 @@ type PacketConn interface {
 //   * Assume network order
 //   * Ignore errors
 // Based on https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
-func getPacketHeader(data []byte) packetHeader {
+func getPacketHeader(data []byte) PacketHeader {
     var packetHeader PacketHeader
     buf := bytes.NewReader(data)
     _ = binary.Read(buf, binary.LittleEndian, &packetHeader)
