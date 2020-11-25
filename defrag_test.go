@@ -32,8 +32,8 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 
 	packetHeader := &PacketHeader {
 		FrameID: c.frame,
-		Count:   c.packet,
-		Number:  3,
+		Count:   c.packets,
+		Number:  c.packet,
 		Length:  1,
 	}
 	// https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
