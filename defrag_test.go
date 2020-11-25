@@ -33,7 +33,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 
 	p[packetHeaderSize] = uint8(c.packet)
 	c.packet += 1
-	return (PacketHeaderSize+1), net.Addr{}, nil
+	return (packetHeaderSize+1), nil, nil
 
 }
 
