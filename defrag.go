@@ -121,6 +121,8 @@ func new(connection PacketConn) io.Reader {
 				buf = buf[:packetSize]
 				d.storeInCache(buf)
 			}
+			// I can call flashFullFrames() only if the frame ID == d.currentFrameID
+			// and save a few lookups in the map
 			d.flashFullFrames()
 			if err != nil {
 				d.ch <- chanMessage{err: errors.New("EOF")}
