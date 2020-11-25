@@ -141,19 +141,19 @@ func (d *Defrag) flashFullFrames() {
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(data)
 	frames := d.frames
-	frameNew, found := frames[packetHeader.frameID]
+	frameNew, found := frames[packetHeader.FrameID]
 	if !found {
 		frameNew = &frame{
-			packets: make([]payload, packetHeader.count),
-			id:      packetHeader.frameID,
+			packets: make([]payload, packetHeader.Count),
+			id:      packetHeader.FrameID,
 
-			packetsExpected: packetHeader.count,
+			packetsExpected: packetHeader.Count,
 			packetsReceived: 0,
 			size:            0,		
 		}
 	}
-	frameNew.packets[packetHeader.number] = data
+	frameNew.packets[packetHeader.Number] = data
 	frameNew.packetsReceived += 1
 	frameNew.size += uint16(len(data))
-	frames[packetHeader.frameID] = frameNew
+	frames[packetHeader.FrameID] = frameNew
 }
