@@ -23,7 +23,6 @@ type PacketConnMock struct {
 }
 
 func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
-	t := c.t
 	if c.packet > c.packets {
 		return 0, nil, errors.New("EOF")
 	}
@@ -41,7 +40,6 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	c.packet += 1
 	fmt.Printf("p=%v\n", p[:packetHeaderSize+1])
 	return (packetHeaderSize+1), nil, nil
-
 }
 
 func Test_Read(t *testing.T) {
