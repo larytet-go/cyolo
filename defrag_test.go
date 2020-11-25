@@ -31,21 +31,14 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 		return 0, nil, errors.New("EOF")
 	}
 
-	packetHeader := &PacketHeader {
+	packetHeader := PacketHeader {
 		FrameID: c.frame,
 		Count:   c.packets,
 		Number:  c.packet,
 		Length:  1,
 	}
-	fmt.Printf("test packetHeader=%v\n", *packetHeader)
-	// https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
-	buf := bytes.NewBuffer(p)
-	err = binary.Write(buf, binary.LittleEndian, packetHeader)
-	if err != nil {
-		t.Fatalf("Unexpected error %v", err)
-	}
-	_, packetHeaderSize, _ := getLimits()
-
+	fmt.Printf("test packetHeader=%v\n", packetHeader)
+	setPacketHeader(p, packetHeader)
 	p[packetHeaderSize] = uint8(c.packet)
 	c.packet += 1
 	fmt.Printf("p=%v\n", p[:packetHeaderSize+1])

@@ -69,12 +69,22 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 //   * Ignore golang padding
 //   * Assume network order
 //   * Ignore errors
-// Based on https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
+// Based on https://medium.com/learning-the-go-programming-language/encoding-data-with-the-go-binary-package-42c7c0eb3e73
 func getPacketHeader(data []byte) PacketHeader {
-    var packetHeader PacketHeader
-    buf := bytes.NewReader(data)
-	binary.Read(buf, binary.LittleEndian, &packetHeader)
+    packetHeader := PacketHeader{
+		FrameID := binary.BigEndian.Uint32(data[0:])
+		Count := binary.BigEndian.Uint16(data[4:])
+		Number := binary.BigEndian.Uint16(data[6:])
+		Length := binary.BigEndian.Uint16(data[8:])
+	}
 	return packetHeader
+}
+
+func setPacketHeader(data []byte, packetHeader PacketHeader) {
+    binary.BigEndian.PutUint32(data[0:], packetHeader.FrameID)
+    binary.BigEndian.PutUint16(data[4:], packetHeader.Count)
+    binary.BigEndian.PutUint16(data[6:], packetHeader.Number)
+    binary.BigEndian.PutUint16(data[8:], packetHeader.Length)
 }
 
 
