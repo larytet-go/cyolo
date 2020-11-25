@@ -119,7 +119,7 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 	return bytesCopied, nil
 }
 
-func (d *Defrag) flashFullFrames(data []byte) {
+func (d *Defrag) flashFullFrames() {
 	found := true
 	currentFrameID := d.currentFrameID
 	for found {
