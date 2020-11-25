@@ -1,7 +1,6 @@
 package defrag
 
 import (
-	"binary"
 	"bytes"
 	"errors"
 	"io"

@@ -6,6 +6,8 @@ import (
 	"net"
 	"testing"
 	"unsafe"
+
+	"encoding/binary"
 )
 
 type PacketConnMock struct {
