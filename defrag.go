@@ -22,7 +22,7 @@ type frame struct {
 
 type chanMessage struct {
 	frame frame
-	err   errors.Error
+	err   error
 }
 
 type Defrag struct {
