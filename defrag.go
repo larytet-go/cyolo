@@ -168,7 +168,6 @@ func (d *Defrag) storeInCache(data []byte) {
 			packets: make([]payload, packetHeader.Count),
 			id:      packetHeader.FrameID,
 			missing: packetHeader.Count,
-			size:    0,
 		}
 	}
 	payload := data[packetHeaderSize:]
