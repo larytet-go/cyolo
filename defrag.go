@@ -79,7 +79,7 @@ func new(connection PacketConn) io.Reader {
 	d := &Defrag {
 		frames: make(map[uint32](*frame)),
 		connection: connection,
-		c: make(chan frame)
+		ch: make(chan chanMessage),
 	}
 	go func(d *Defrag) {
 		for {
