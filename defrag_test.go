@@ -29,7 +29,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	}
 	// https://stackoverflow.com/questions/27814408/working-with-raw-bytes-from-a-network-in-go
 	buf := bytes.NewBuffer(p)
-	binary.Write(buf, binary.LittleEndian, header)
+	binary.Write(buf, binary.LittleEndian, packetHeader)
 	p[PacketHeaderSize:] = c.packet
 	c.packet += 1
 	return (PacketHeaderSize+1), net.Addr{}, nil
