@@ -119,7 +119,9 @@ func new(connection PacketConn) io.Reader {
 		for {
 			_, _, maxFrameSize := getLimits()
 			buf := make([]byte, maxFrameSize)
+			fmt.Printf("Read\n")
 			packetSize, _, err := d.connection.ReadFrom(buf)
+			fmt.Printf("Read %d\n", packetSize)
 			if packetSize > 0 {
 				buf = buf[:packetSize]
 				d.storeInCache(buf)
