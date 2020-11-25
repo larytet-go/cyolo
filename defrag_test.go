@@ -1,7 +1,6 @@
 package defrag
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"net"
