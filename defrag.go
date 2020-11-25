@@ -30,6 +30,10 @@ type Defrag struct {
 	frames map[uint32](*frame)
 	connection  net.PacketConn
 	ch chan chanMessage
+
+	maxPayloadSize int
+	packetHeaderSize int
+	maxFrameSize int
 }
 
 type PacketHeader struct {
@@ -38,12 +42,6 @@ type PacketHeader struct {
 	number  uint16
 	length  uint16
 }
-
-var (
-	PayloadSize = math.MaxUint16
-	PacketHeaderSize = unsafe.Sizeof(PacketHeader)
-	MaxFrameSize = PacketHeaderSize + PayloadSize
-) 
 
 type PacketConn interface {
     ReadFrom(p []byte) (n int, addr Addr, err error)
@@ -81,6 +79,10 @@ func new(connection PacketConn) io.Reader {
 		connection: connection,
 		ch: make(chan chanMessage),
 	}
+	d.maxPayloadSize = math.MaxUint16,
+	d.packetHeaderSize = unsafe.Sizeof(PacketHeader)
+	d.maxFrameSize = d.PacketHeaderSize + d.PayloadSize
+
 	// Read packets from the connection until an error
 	go func(d *Defrag) {
 		for {
