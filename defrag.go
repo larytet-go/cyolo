@@ -45,7 +45,8 @@ func New(connection net.PacketConn) io.Reader {
 	return new(connection)
 }
 
-// Read reads frames from the channel into the provided buffer
+// Blocking Read from the Defragmentation API
+// Read reads frames from the channel into the provided by the user buffer
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
 func (d *Defrag) Read(p []byte) (n int, err error) {
@@ -63,10 +64,7 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 }
 
 // Fetch the packet header from a raw packet, return a Go struct
-// Cutting corners:
-//   * Ignore golang padding
-//   * Assume network order
-//   * Ignore errors
+// Network order?
 // Based on https://medium.com/learning-the-go-programming-language/encoding-data-with-the-go-binary-package-42c7c0eb3e73
 func getPacketHeader(data []byte) PacketHeader {
     packetHeader := PacketHeader{
@@ -78,6 +76,9 @@ func getPacketHeader(data []byte) PacketHeader {
 	return packetHeader
 }
 
+// Setup a packet header in a raw packet
+// Network order?
+// Based on https://medium.com/learning-the-go-programming-language/encoding-data-with-the-go-binary-package-42c7c0eb3e73
 func setPacketHeader(data []byte, packetHeader PacketHeader) {
     binary.BigEndian.PutUint32(data[0:], packetHeader.FrameID)
     binary.BigEndian.PutUint16(data[4:], packetHeader.Count)
