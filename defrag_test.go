@@ -25,7 +25,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 		return 0, nil, errors.New("EOF")
 	}
 
-	packetHeader := PacketHeader {
+	packetHeader := PacketHeader{
 		FrameID: c.frame,
 		Count:   c.packets,
 		Number:  c.packet,
@@ -34,13 +34,13 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	setPacketHeader(p, packetHeader)
 	p[packetHeaderSize] = uint8(c.packet)
 	c.packet += 1
-	return (packetHeaderSize+1), nil, nil
+	return (packetHeaderSize + 1), nil, nil
 }
 
-// Cutting corners: 
+// Cutting corners:
 //   * Test only one frame
 func Test_Read(t *testing.T) {
-	packetConnMock := &PacketConnMock {
+	packetConnMock := &PacketConnMock{
 		packets: 3,
 
 		t: t,
