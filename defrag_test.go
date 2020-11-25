@@ -17,13 +17,17 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 		return 0, net.Addr{}, errors.New("EOF")
 	}
 
-	packetHeader := PacketHeader {
+	packetHeader := &PacketHeader {
 		frameID: c.frame,
 		count:   c.packet,
 		number:  3,
 		length:  1,
 	}
+	_ := binary.Write(p, binary.LittleEndian, header)
+	 p[PacketHeaderSize:] = c.packet
 	c.packet += 1
+	return (PacketHeaderSize+1), net.Addr{}, nil
+
 }
 
 func Test_Read(t *testing.T) {

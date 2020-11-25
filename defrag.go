@@ -39,7 +39,8 @@ type PacketHeader {
 
 const(
 	PayloadSize = math.MaxUint16
-	MaxFrameSize = unsafe.Sizeof(PacketHeader) + PayloadSize
+	PacketHeaderSize = unsafe.Sizeof(PacketHeader)
+	MaxFrameSize = PacketHeaderSize + PayloadSize
 ) 
 
 type PacketConn interface {
