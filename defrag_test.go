@@ -50,7 +50,7 @@ func Test_Read(t *testing.T) {
 	if count != 3 {
 		t.Fatalf("Unexpected frame size %d", count)
 	}
-	_, err := reader.Read(buf)
+	_, err = reader.Read(buf)
 	if err == nil {
 		t.Fatalf("Expected error")
 	}
