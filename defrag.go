@@ -2,7 +2,6 @@ package defrag
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"math"
 	"net"
@@ -119,15 +118,12 @@ func new(connection PacketConn) io.Reader {
 		for {
 			_, _, maxFrameSize := getLimits()
 			buf := make([]byte, maxFrameSize)
-			fmt.Printf("Read\n")
 			packetSize, _, err := d.connection.ReadFrom(buf)
-			fmt.Printf("Read %d\n", packetSize)
 			if packetSize > 0 {
 				buf = buf[:packetSize]
 				d.storeInCache(buf)
 			}
 			d.flashFullFrames()
-			fmt.Printf("flashFullFrames done\n")
 			if err != nil {
 				d.ch <- chanMessage{err: errors.New("EOF")}
 				break
@@ -158,7 +154,6 @@ func (d *Defrag) flashFullFrames() {
 
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(data)
-	fmt.Printf("packetHeader %v\n", packetHeader)
 	frames := d.frames
 	frameNew, found := frames[packetHeader.FrameID]
 	if !found {
