@@ -11,7 +11,8 @@ import (
 
 type (
 	payload []byte
-	frame   struct {
+	// I keep frames in a map
+	frame  struct {
 		packets []payload
 		id      uint32
 		missing uint16
@@ -76,7 +77,7 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 	return bytesCopied, nil
 }
 
-// Fetch the packet header from a raw packet, return a Go struct
+// Fetch the packet header from a raw packet
 // Network order?
 func (ph *PacketHeader) read(data []byte) {
 	ph.FrameID = binary.BigEndian.Uint32(data[0:])
