@@ -124,7 +124,7 @@ func (d *Defrag) flashFullFrames() {
 	found := true
 	currentFrameID := d.currentFrameID
 	for found {
-		frameNew, found := frames[currentFrameID]
+		frameNew, found := d.frames[currentFrameID]
 		// I have a complete frame?
 		found = found && frameNew.packetsExpected == frameNew.packetsReceived 
 		if found {
