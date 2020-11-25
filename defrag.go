@@ -21,7 +21,7 @@ type frame struct {
 }
 
 type chanMessage struct {
-	frame frame
+	frame *frame
 	err   error
 }
 
