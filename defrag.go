@@ -81,6 +81,7 @@ func new(connection PacketConn) io.Reader {
 		connection: connection,
 		ch: make(chan chanMessage),
 	}
+	// Read packets from the connection until an error
 	go func(d *Defrag) {
 		for {
 			buf := make([]byte, MaxFrameSize)
@@ -95,7 +96,7 @@ func new(connection PacketConn) io.Reader {
 				break
 			}	
 		}
-	}
+	}(d)
 	return d
 }
 
