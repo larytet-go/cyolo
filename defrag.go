@@ -8,8 +8,6 @@ import (
 	"unsafe"
 
 	"encoding/binary"
-
-	gocache "github.com/patrickmn/go-cache"
 )
 
 type payload []byte
@@ -21,9 +19,13 @@ type frame struct {
 	size            uint16
 }
 
+type chanMessage {
+	frame frame
+	eof   bool
+}
 type Defrag struct {
 	currentFrameID uint32
-	frames   gocache.Cache
+	frames map[uint32])(*frame)
 	connection  net.PacketConn
 	c chan frame
 }
@@ -64,7 +66,7 @@ func getPacketHeader(data []byte) packetHeader {
 //  * I read a whole packet every time
 func New(func(connection net.PacketConn) io.Reader {
 	d := &Defrag {
-		frames:  gocache.New(gocache.NoExpiration, gocache.NoExpiration),
+		frames: make(map[uint32](*frame)),
 		connection: connection,
 		c: make(chan frame)
 	}
@@ -98,10 +100,11 @@ func (d *Defrag) flashFullFrames(data []byte) {
 	found := true
 	currentFrameID := d.currentFrameID
 	for found {
-		frameNew, found := frames.Get(currentFrameID)
+		frameNew, found := frames[currentFrameID]
 		// I have a complete frame?
 		found = found && frameNew.packetsExpected == frameNew.packetsReceived 
 		if found {
+			delete(frames, currentFrameID)
 			currentFrameID += 1
 			d.c <- frameNew
 		}
@@ -114,7 +117,7 @@ func (d *Defrag) flashFullFrames(data []byte) {
 func (d *Defrag) storeInCache(data []byte) {
 	packetHeader := getPacketHeader(buf)
 	frames := d.frames
-	frameNew, found := frames.Get(packetHeader.frameID)
+	frameNew, found := frames[packetHeader.frameID]
 	if !found {
 		frameNew = &frame{
 			packets: make([]payload, packetHeader.packets),
@@ -128,5 +131,5 @@ func (d *Defrag) storeInCache(data []byte) {
 	frameNew.packets[packetHeader.number] = data
 	frameNew.packetsReceived += 1
 	frameNew.size += len(data)
-	frames.Set(packetHeader.frameID, frameNew)
+	frames[packetHeader.frameID] = frameNew
 }
