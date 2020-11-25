@@ -43,6 +43,27 @@ type PacketHeader struct {
 	Length  uint16
 }
 
+func New(connection net.PacketConn) io.Reader {
+	return new(connection)
+}
+
+// Read reads frames from the channel into the provided buffer
+// Cutting corners:
+//    * User provided buf has enough space for the whole frame?
+func (d *Defrag) Read(p []byte) (n int, err error) {
+	msg := <- d.ch
+	if msg.err != nil {
+		return 0, msg.err
+	}
+	bytesCopied := 0
+	frame := msg.frame
+	for _, packet := range(frame.packets){
+		copy(p[bytesCopied:], []byte(packet))
+		bytesCopied += len(packet)
+	}
+	return bytesCopied, nil
+}
+
 // Fetch the packet header from a raw packet, return a Go struct
 // Cutting corners:
 //   * Assume network order
@@ -55,9 +76,6 @@ func getPacketHeader(data []byte) PacketHeader {
 	return packetHeader
 }
 
-func New(connection net.PacketConn) io.Reader {
-	return new(connection)
-}
 
 func getLimits() (maxPayloadSize int, packetHeaderSize int, maxFrameSize int) {
 	maxPayloadSize = math.MaxUint16
@@ -102,23 +120,6 @@ func new(connection PacketConn) io.Reader {
 		}
 	}(d)
 	return d
-}
-
-// Read reads frames from the channel into the provided buffer
-// Cutting corners:
-//    * User provided buf has enough space for the whole frame?
-func (d *Defrag) Read(p []byte) (n int, err error) {
-	msg := <- d.ch
-	if msg.err != nil {
-		return 0, msg.err
-	}
-	bytesCopied := 0
-	frame := msg.frame
-	for _, packet := range(frame.packets){
-		copy(p[bytesCopied:], []byte(packet))
-		bytesCopied += len(packet)
-	}
-	return bytesCopied, nil
 }
 
 func (d *Defrag) flashFullFrames() {

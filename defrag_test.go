@@ -42,6 +42,18 @@ func Test_Read(t *testing.T) {
 		packets: 3,
 	}
 	reader := new(packetConnMock)
+	buf := make([]byte, 1024)
+	count, err := reader.Read(buf)
+	if err != nil {
+		t.Fatalf("Unexpected error %v", err)
+	}
+	if count != 3 {
+		t.Fatalf("Unexpected frame size %d", count)
+	}
+	_, err := reader.Read(buf)
+	if err == nil {
+		t.Fatalf("Expected error")
+	}
 }
 
 
