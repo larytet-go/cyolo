@@ -77,23 +77,20 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 
 // Fetch the packet header from a raw packet, return a Go struct
 // Network order?
-func getPacketHeader(data []byte) PacketHeader {
-	packetHeader := PacketHeader{
-		FrameID: binary.BigEndian.Uint32(data[0:]),
-		Count:   binary.BigEndian.Uint16(data[4:]),
-		Number:  binary.BigEndian.Uint16(data[6:]),
-		Length:  binary.BigEndian.Uint16(data[8:]),
-	}
-	return packetHeader
+func (ph *PacketHeader) read(data []byte) {
+	ph.FrameID = binary.BigEndian.Uint32(data[0:])
+	ph.Count = binary.BigEndian.Uint16(data[4:])
+	ph.Number = binary.BigEndian.Uint16(data[6:])
+	ph.Length = binary.BigEndian.Uint16(data[8:])
 }
 
 // Setup a packet header in a raw packet
 // Network order?
-func setPacketHeader(data []byte, packetHeader PacketHeader) {
-	binary.BigEndian.PutUint32(data[0:], packetHeader.FrameID)
-	binary.BigEndian.PutUint16(data[4:], packetHeader.Count)
-	binary.BigEndian.PutUint16(data[6:], packetHeader.Number)
-	binary.BigEndian.PutUint16(data[8:], packetHeader.Length)
+func (ph *PacketHeader) write(data []byte) {
+	binary.BigEndian.PutUint32(data[0:], ph.FrameID)
+	binary.BigEndian.PutUint16(data[4:], ph.Count)
+	binary.BigEndian.PutUint16(data[6:], ph.Number)
+	binary.BigEndian.PutUint16(data[8:], ph.Length)
 }
 
 // Defrag reads fragments of the packets from the connection
@@ -160,7 +157,8 @@ func (d *Defrag) flashFullFrames() {
 // If cache miss add add a new frame to the cache
 // If cache hit update the frame in the cache
 func (d *Defrag) storeInCache(data []byte) {
-	packetHeader := getPacketHeader(data)
+	packetHeader := &PacketHeader{}
+	packetHeader.read(data)
 	frames := d.frames
 	cachedFrame, found := frames[packetHeader.FrameID]
 	if !found {
