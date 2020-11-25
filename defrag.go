@@ -76,7 +76,6 @@ func (d *Defrag) Read(p []byte) (n int, err error) {
 
 // Fetch the packet header from a raw packet, return a Go struct
 // Network order?
-// Based on https://medium.com/learning-the-go-programming-language/encoding-data-with-the-go-binary-package-42c7c0eb3e73
 func getPacketHeader(data []byte) PacketHeader {
     packetHeader := PacketHeader{
 		FrameID: binary.BigEndian.Uint32(data[0:]),
@@ -89,7 +88,6 @@ func getPacketHeader(data []byte) PacketHeader {
 
 // Setup a packet header in a raw packet
 // Network order?
-// Based on https://medium.com/learning-the-go-programming-language/encoding-data-with-the-go-binary-package-42c7c0eb3e73
 func setPacketHeader(data []byte, packetHeader PacketHeader) {
     binary.BigEndian.PutUint32(data[0:], packetHeader.FrameID)
     binary.BigEndian.PutUint16(data[4:], packetHeader.Count)
