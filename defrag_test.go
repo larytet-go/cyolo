@@ -37,6 +37,8 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	return (packetHeaderSize+1), nil, nil
 }
 
+// Cutting corners: 
+//   * Test only one frame
 func Test_Read(t *testing.T) {
 	packetConnMock := &PacketConnMock {
 		packets: 3,
