@@ -44,7 +44,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 }
 
 // Cutting corners:
-//  * Only basics
+//  * Bare minimum
 func Test_Read(t *testing.T) {
 	packetConnMock := &PacketConnMock{
 		packets: []PacketConnMockPacket{
