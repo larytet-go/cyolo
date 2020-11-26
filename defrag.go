@@ -72,12 +72,13 @@ func New(connection net.PacketConn) io.Reader {
 // Copies the data from the frame into the provided by the user buffer
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
+//    * Parallel Calls to Read() after EOF can block
 func (s *State) Read(p []byte) (n int, err error) {
 	if s.err != nil {
 		return 0, s.err
 	}
 	msg := <-s.ch
-	s.err = msg.err
+	s.err = msg.err // A race condition here!
 	if msg.err != nil {
 		return 0, msg.err
 	}
