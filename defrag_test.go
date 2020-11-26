@@ -71,8 +71,12 @@ func Test_Read(t *testing.T) {
 			t.Fatalf("Unexpected index %d", frameIdx)
 		}
 	}
-	_, err := reader.Read(buf)
-	if err == nil {
-		t.Fatalf("Expected error")
+
+	// Try to call the API a few times, make sure I get EOF
+	for i := 0; i < 2; i++ {
+		_, err := reader.Read(buf)
+		if err == nil {
+			t.Fatalf("Expected error")
+		}
 	}
 }

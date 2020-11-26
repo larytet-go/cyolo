@@ -48,6 +48,7 @@ type (
 		frames     map[uint32](*frame)
 		connection PacketConn
 		ch         chan chanMessage
+		err        error
 	}
 )
 
@@ -71,9 +72,12 @@ func New(connection net.PacketConn) io.Reader {
 // Copies the data from the frame into the provided by the user buffer
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
-//    * A call following EOF block forever
 func (s *State) Read(p []byte) (n int, err error) {
+	if s.err != nil {
+		return 0, s.err
+	}
 	msg := <-s.ch
+	s.err = msg.err
 	if msg.err != nil {
 		return 0, msg.err
 	}
