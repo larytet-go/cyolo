@@ -68,7 +68,7 @@ func New(connection net.PacketConn) io.Reader {
 }
 
 // Blocking Read
-// Read reads frames from the channel a whole frame
+// Read reads a whole frame from the channel
 // Copies the data from the frame into the provided by the user buffer
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
@@ -109,7 +109,7 @@ func (ph *PacketHeader) write(data []byte) {
 	binary.BigEndian.PutUint16(data[8:], ph.Length)
 }
 
-// State reads fragments of the packets from the connection
+// Defrag reads fragments of the packets from the connection
 // collects packets in a cache. When all packets of a frame are collected writes
 // the whole frame to the output channel
 // Cutting corners:
