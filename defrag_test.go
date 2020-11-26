@@ -66,7 +66,7 @@ func Test_Read(t *testing.T) {
 			t.Fatalf("Unexpected frame size %d", count)
 		}
 		packetIdx := int(buf[0])
-		t,logf("i = %d, packetIdx=%d", i, packetIdx)
+		t.Logf("i = %d, packetIdx=%d", i, packetIdx)
 		if packetIdx != i {
 			t.Fatalf("Unexpected index %d", packetIdx)
 		}
