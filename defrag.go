@@ -175,7 +175,7 @@ func (s *State) flashFullFrames() {
 // If cache miss add a new frame to the cache
 // If cache hit update the frame in the cache
 // Cutting corners:
-//  * I do expect duplicate packets
+//  * I do not expect duplicate packets
 //  * RAM is unlimited
 //  * 'map' never overflows
 //  * I do not check packetHeader.Length (payload length)
