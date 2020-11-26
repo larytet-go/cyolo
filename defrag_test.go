@@ -65,10 +65,10 @@ func Test_Read(t *testing.T) {
 		if count != 2 {
 			t.Fatalf("Unexpected frame size %d", count)
 		}
-		packetIdx := int(buf[0])
-		t.Logf("i = %d, packetIdx=%d", i, packetIdx)
-		if packetIdx != i {
-			t.Fatalf("Unexpected index %d", packetIdx)
+		frameIdx := int(buf[0])
+		t.Logf("i = %d, frameIdx=%d", i, frameIdx)
+		if frameIdx != i {
+			t.Fatalf("Unexpected index %d", frameIdx)
 		}
 	}
 	_, err := reader.Read(buf)
