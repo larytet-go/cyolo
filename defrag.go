@@ -11,6 +11,7 @@ import (
 
 type (
 	payload []byte
+
 	// I keep frames in a map
 	frame struct {
 		packets []payload
@@ -19,6 +20,8 @@ type (
 		size    uint32
 	}
 
+	// An API's user blocks on read from this channel 
+	// until a whole frame collected
 	chanMessage struct {
 		frame *frame
 		err   error
@@ -31,12 +34,16 @@ type (
 		Length  uint16
 	}
 
+	// An essence of net.PacketConn interface
+	// I need a simpler interface for unitests
 	PacketConn interface {
 		ReadFrom(p []byte) (n int, addr net.Addr, err error)
 	}
 
 	Defrag struct {
 		currentFrameID uint32
+
+		// I keep incoming packets (fragments) here
 		frames         map[uint32](*frame)
 		connection     PacketConn
 		ch             chan chanMessage
