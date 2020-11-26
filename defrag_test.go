@@ -31,7 +31,6 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	}
 
 	packet := c.packets[c.packetIdx]
-	c.packetIdx += 1
 	packetHeader := PacketHeader{
 		FrameID: packet.frame,
 		Count:   packet.packets,
@@ -40,6 +39,7 @@ func (c *PacketConnMock) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	}
 	packetHeader.write(p)
 	p[packetHeaderSize] = uint8(c.packetIdx)
+	c.packetIdx += 1
 	return (packetHeaderSize + 1), nil, nil
 }
 
