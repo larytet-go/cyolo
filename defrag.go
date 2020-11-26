@@ -172,7 +172,7 @@ func (s *State) flashFullFrames() {
 }
 
 // Fetch the packet header
-// If cache miss add add a new frame to the cache
+// If cache miss add a new frame to the cache
 // If cache hit update the frame in the cache
 // Cutting corners:
 //  * I do expect duplicate packets
