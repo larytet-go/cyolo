@@ -20,7 +20,7 @@ type (
 		size    uint32
 	}
 
-	// An API's user blocks on read from this channel 
+	// An API's user blocks on read from this channel
 	// until a whole frame collected
 	chanMessage struct {
 		frame *frame
@@ -44,9 +44,9 @@ type (
 		currentFrameID uint32
 
 		// I keep incoming packets (fragments) here
-		frames         map[uint32](*frame)
-		connection     PacketConn
-		ch             chan chanMessage
+		frames     map[uint32](*frame)
+		connection PacketConn
+		ch         chan chanMessage
 	}
 )
 
