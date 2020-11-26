@@ -72,8 +72,8 @@ func New(connection net.PacketConn) io.Reader {
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
 //    * A call following EOF block forever
-func (d *State) Read(p []byte) (n int, err error) {
-	msg := <-d.ch
+func (s *State) Read(p []byte) (n int, err error) {
+	msg := <-s.ch
 	if msg.err != nil {
 		return 0, msg.err
 	}
@@ -123,20 +123,20 @@ func new(connection PacketConn) io.Reader {
 
 	// Read packets from the connection until an error
 	// One thread does it all, no need for synchronization
-	go func(d *State) {
+	go func(s *State) {
 		for {
 			buf := make([]byte, maxFrameSize)
-			packetSize, _, err := d.connection.ReadFrom(buf)
+			packetSize, _, err := s.connection.ReadFrom(buf)
 			if packetSize > 0 {
 				// Assume that ReadFrom returns the whole packet
 				buf = buf[:packetSize]
-				d.storeInCache(buf)
+				s.storeInCache(buf)
 			}
-			// I can call flashFullFrames() only if the frame ID == d.currentFrameID
+			// I can call flashFullFrames() only if the frame ID == s.currentFrameID
 			// and save a few lookups in the map
-			d.flashFullFrames()
+			s.flashFullFrames()
 			if err != nil {
-				d.ch <- chanMessage{err: errors.New("EOF")}
+				s.ch <- chanMessage{err: errors.New("EOF")}
 				break
 			}
 		}
@@ -147,23 +147,23 @@ func new(connection PacketConn) io.Reader {
 // Check if currentFrameID is in the cache and completed
 // If I have a whole frame send the frame to the client
 // increment the currentFrameID
-func (d *State) flashFullFrames() {
+func (s *State) flashFullFrames() {
 	found := true
-	currentFrameID := d.currentFrameID
+	currentFrameID := s.currentFrameID
 	frame := &frame{}
 	for found {
-		frame, found = d.frames[currentFrameID]
+		frame, found = s.frames[currentFrameID]
 		// I have a complete frame?
 		found = found && (frame.missing == 0)
 		if found {
-			d.ch <- chanMessage{frame: frame}
-			delete(d.frames, currentFrameID)
+			s.ch <- chanMessage{frame: frame}
+			delete(s.frames, currentFrameID)
 			currentFrameID += 1
 		}
 	}
 
 	// Probably a new currentFrameID
-	d.currentFrameID = currentFrameID
+	s.currentFrameID = currentFrameID
 }
 
 // Fetch the packet header
@@ -174,10 +174,10 @@ func (d *State) flashFullFrames() {
 //  * RAM is unlimited
 //  * 'map' never overflows
 //  * I do not check packetHeader.Length (payload length)
-func (d *State) storeInCache(data []byte) {
+func (s *State) storeInCache(data []byte) {
 	packetHeader := &PacketHeader{}
 	packetHeader.read(data)
-	frames := d.frames
+	frames := s.frames
 	cachedFrame, found := frames[packetHeader.FrameID]
 	if !found {
 		cachedFrame = &frame{
