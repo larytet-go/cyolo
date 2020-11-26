@@ -40,7 +40,8 @@ type (
 		ReadFrom(p []byte) (n int, addr net.Addr, err error)
 	}
 
-	Defrag struct {
+	// Sate of the defagmentator
+	State struct {
 		currentFrameID uint32
 
 		// I keep incoming packets (fragments) here
@@ -71,7 +72,7 @@ func New(connection net.PacketConn) io.Reader {
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
 //    * A call following EOF block forever
-func (d *Defrag) Read(p []byte) (n int, err error) {
+func (d *State) Read(p []byte) (n int, err error) {
 	msg := <-d.ch
 	if msg.err != nil {
 		return 0, msg.err
@@ -103,7 +104,7 @@ func (ph *PacketHeader) write(data []byte) {
 	binary.BigEndian.PutUint16(data[8:], ph.Length)
 }
 
-// Defrag reads fragments of the packets from the connection
+// State reads fragments of the packets from the connection
 // collects packets in a cache. When all packets of a frame are collected writes
 // the whole frame to the output channel
 // Cutting corners:
@@ -114,7 +115,7 @@ func (ph *PacketHeader) write(data []byte) {
 //  * No initial synchronization: first frame has ID 0
 //  * I read a whole packet every time
 func new(connection PacketConn) io.Reader {
-	d := &Defrag{
+	d := &State{
 		frames:     make(map[uint32](*frame)),
 		connection: connection,
 		ch:         make(chan chanMessage),
@@ -122,7 +123,7 @@ func new(connection PacketConn) io.Reader {
 
 	// Read packets from the connection until an error
 	// One thread does it all, no need for synchronization
-	go func(d *Defrag) {
+	go func(d *State) {
 		for {
 			buf := make([]byte, maxFrameSize)
 			packetSize, _, err := d.connection.ReadFrom(buf)
@@ -146,7 +147,7 @@ func new(connection PacketConn) io.Reader {
 // Check if currentFrameID is in the cache and completed
 // If I have a whole frame send the frame to the client
 // increment the currentFrameID
-func (d *Defrag) flashFullFrames() {
+func (d *State) flashFullFrames() {
 	found := true
 	currentFrameID := d.currentFrameID
 	frame := &frame{}
@@ -173,7 +174,7 @@ func (d *Defrag) flashFullFrames() {
 //  * RAM is unlimited
 //  * 'map' never overflows
 //  * I do not check packetHeader.Length (payload length)
-func (d *Defrag) storeInCache(data []byte) {
+func (d *State) storeInCache(data []byte) {
 	packetHeader := &PacketHeader{}
 	packetHeader.read(data)
 	frames := d.frames
