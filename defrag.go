@@ -12,7 +12,7 @@ import (
 type (
 	payload []byte
 	// I keep frames in a map
-	frame  struct {
+	frame struct {
 		packets []payload
 		id      uint32
 		missing uint16
@@ -63,6 +63,7 @@ func New(connection net.PacketConn) io.Reader {
 // Copies the data from the frame into the provided by the user buffer
 // Cutting corners:
 //    * Provided by the user 'buf' has enough space for the whole frame
+//    * A call following EOF block forever
 func (d *Defrag) Read(p []byte) (n int, err error) {
 	msg := <-d.ch
 	if msg.err != nil {
