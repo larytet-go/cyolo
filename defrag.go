@@ -149,6 +149,13 @@ func new(connection PacketConn) io.Reader {
 	return d
 }
 
+// Bug! I should return frames in the order of the first fragments. 
+// If the first fragment of the frame B arrives before the first fragment
+// of the frame A the API should return frame B first. Ths is not
+// what happesn in this code. You will need an ordered list 
+// of frames ordered by the timestamp of first packet arrival 
+// instead of the map
+//
 // Check if currentFrameID is in the cache and completed
 // If I have a whole frame send the frame to the client
 // increment the currentFrameID
